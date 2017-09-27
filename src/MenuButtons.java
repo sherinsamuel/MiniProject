@@ -188,16 +188,16 @@ class MenuButtons {
             obj.setDate(res.getString(2));
             System.out.println(obj.getDate());
 
-            obj.setTime(res.getString(6));
+            obj.setTime(res.getString(3));
             System.out.println(obj.getTime());
 
-            obj.setWithdraw(res.getString(3));
+            obj.setWithdraw(res.getString(4));
             System.out.println(obj.getWithdraw());
 
-            obj.setDeposit(res.getString(4));
+            obj.setDeposit(res.getString(5));
             System.out.println(obj.getDeposit());
 
-            obj.setBalance(res.getString(5));
+            obj.setBalance(res.getString(6));
             System.out.println(obj.getBalance());
 
             data.add(obj);
@@ -237,8 +237,6 @@ class MenuButtons {
         TextField uidai_=new TextField();
         uidai_.setText(res.getString(7));
 
-        TextField pass_=new TextField();
-
         Button update=new Button("Update Details");
 
         DatePicker cal=new DatePicker();
@@ -258,15 +256,15 @@ class MenuButtons {
         GridPane.setConstraints(cal,1,8);
         GridPane.setConstraints(uidai,0,10);
         GridPane.setConstraints(uidai_,1,10);
-        GridPane.setConstraints(pass,0,12);
-        GridPane.setConstraints(pass_,1,12);
+        /*GridPane.setConstraints(pass,0,12);
+        GridPane.setConstraints(pass_,1,12);*/
         GridPane.setConstraints(update,1,14);
 
 
         layout.setAlignment(Pos.CENTER);
         layout.setVgap(10);
         layout.setHgap(8);
-        layout.getChildren().addAll(fullname,fullname_,address,address_,mobile,mobile_,email,email_,dob,cal,uidai,uidai_,pass,pass_,update);
+        layout.getChildren().addAll(fullname,fullname_,address,address_,mobile,mobile_,email,email_,dob,cal,uidai,uidai_,update);
 
         border.setCenter(layout);
 

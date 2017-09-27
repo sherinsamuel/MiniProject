@@ -92,10 +92,15 @@ public class Customer{
 
         BorderPane border=new BorderPane();
         logs.setOnAction(e -> {
-
-            border.setCenter(layout4);
-
-
+            VBox layout_log = new VBox(10);
+            try {
+                layout_log.getChildren().add(new MenuButtons().makeTable(ID, 1));
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            //layout_log.setPadding(new Insets(20));
+            layout_log.setAlignment(Pos.TOP_CENTER);
+            border.setCenter(layout_log);
         });
 
         profile.setOnAction(e -> {
