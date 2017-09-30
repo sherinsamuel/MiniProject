@@ -1,3 +1,5 @@
+
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,7 +20,6 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-
 public class Admin{
 
     private static Scene scene2;
@@ -32,6 +33,7 @@ public class Admin{
     void adminInterface(Stage window,  Scene scene1) throws Exception {
 
         Text default_text=new Text("Welcome Admin");
+        default_text.setFont(Font.font("Verdana",30));
 
         Button profile=new Button("profile");
         profile.setStyle("-fx-padding:15");
@@ -59,6 +61,9 @@ public class Admin{
 
         Button update =new Button("Update");
         update.setStyle("-fx-padding:15");
+
+        Button delete=new Button("Delete");
+        delete.setStyle("-fx-padding:15");
 
 
         TextField search_acc=new TextField();
@@ -94,14 +99,14 @@ public class Admin{
 
             if(menu.getValue()=="Create Account")
             {
-                MenuButtons.acc_details();
+                MakeAccount.acc_details();
             }
 
         });
 
 
-        VBox layout1=new VBox(50);
-        layout1.getChildren().addAll(profile,deposit,withdraw,logs,update);
+        VBox layout1=new VBox(30);
+        layout1.getChildren().addAll(profile,deposit,withdraw,logs,update,delete);
         layout1.setPadding(new Insets(5));
         layout1.setStyle("-fx-background-color:lightgray");
         layout1.setAlignment(Pos.CENTER);
@@ -169,10 +174,15 @@ public class Admin{
             border2.setCenter(layout_search);
 
             }
-            else p.setText("Account ID not available!!");
+            else Gui.alert_box("Account ID not available !!",0);
 
 
         });
+
+        /*search_acc.textProperty().addListener((obs, oldText, newText) -> {
+            System.out.println("Text changed from "+oldText+" to "+newText);
+            // ...
+        });*/
 
         profile.setOnAction(e -> border2.setCenter(layout_search));
 
@@ -183,7 +193,7 @@ public class Admin{
                 VBox layout_deposit=new VBox(10);
                 layout_deposit.setAlignment(Pos.TOP_CENTER);
                 try {
-                    layout_deposit.getChildren().addAll(deposit_text,deposit_rs,new MenuButtons().makeTable(check_id,0));
+                    layout_deposit.getChildren().addAll(deposit_text,deposit_rs,new AddTable().makeTable(check_id,0));
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -201,7 +211,7 @@ public class Admin{
                 VBox layout_withdraw=new VBox(10);
                 layout_withdraw.setAlignment(Pos.TOP_CENTER);
                 try {
-                    layout_withdraw.getChildren().addAll(withdraw_text,withdraw_rs,new MenuButtons().makeTable(check_id,0));
+                    layout_withdraw.getChildren().addAll(withdraw_text,withdraw_rs,new AddTable().makeTable(check_id,0));
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -217,7 +227,7 @@ public class Admin{
             if(set_layout_flag) {
                 VBox layout_log = new VBox(10);
                 try {
-                    layout_log.getChildren().add(new MenuButtons().makeTable(check_id, 1));
+                    layout_log.getChildren().add(new AddTable().makeTable(check_id, 1));
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -232,7 +242,7 @@ public class Admin{
             if(set_layout_flag)
             {
                 try {
-                    MenuButtons.callUpdate(check_id,border2);
+                    UpdateAccount.callUpdate(check_id,border2);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -244,13 +254,20 @@ public class Admin{
 
             if(!deposit_text.getText().isEmpty()) {
 
-                if (Gui.alert_box("Confirm deposit ?", 1)) {
+                try {
 
-                    try {
-                        Execute_query.deposit(check_id,deposit_text.getText());
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
+                    Integer.parseInt(deposit_text.getText());
+                    if (Gui.alert_box("Confirm deposit ?", 1)) {
+
+                        try {
+                            Execute_query.deposit(check_id, deposit_text.getText());
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
                     }
+                }catch (Exception e1)
+                {
+                    Gui.alert_box("Invalid Input!!",0);
                 }
             }
             else
@@ -262,19 +279,42 @@ public class Admin{
 
             if(!withdraw_text.getText().isEmpty()) {
 
-                if (Gui.alert_box("Confirm withdraw ?", 1)) {
+                try {
 
-                    try {
-                        Execute_query.withdraw(check_id,withdraw_text.getText());
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
+                    Integer.parseInt(withdraw_text.getText());
+                    if (Gui.alert_box("Confirm withdraw ?", 1)) {
+
+                        try {
+                            Execute_query.withdraw(check_id, withdraw_text.getText());
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
                     }
+                }catch (Exception e1){
+                    Gui.alert_box("Invalid Input!!",0);
                 }
             }
             else
                 Gui.alert_box("Amount not entered!!",0);
 
         });
+
+        delete.setOnAction(e -> {
+
+            if(set_layout_flag)
+            {
+                if(Gui.alert_box("Confirm delete account "+check_id+" ??",1))
+                {
+                    try {
+                        Execute_query.delete_acc(check_id);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+
+                }
+        );
 
 
     }

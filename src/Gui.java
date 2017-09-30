@@ -16,7 +16,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-
 public class Gui extends Application {
 
     Stage window;
@@ -25,12 +24,12 @@ public class Gui extends Application {
     Customer cust=new Customer();
     static boolean yes_flag;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         launch(java.lang.String.valueOf(args));
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
 
         window=primaryStage;
         window.setTitle("Login Window");
@@ -47,9 +46,9 @@ public class Gui extends Application {
 
         Button button=new Button("LOGIN");
         button.setStyle("-fx-background-color:lightgreen");
-        Button button_setup=new Button("setup");
-        button_setup.setStyle("-fx-background-color:ff9999");
-        button_setup.setTextFill(Paint.valueOf("white"));
+
+        Button forgot=new Button("Forgot Password ?");
+        forgot.setStyle("-fx-background-color:#ff6666");
 
         GridPane layout=new GridPane();
         GridPane.setConstraints(label_id,19,10);
@@ -57,16 +56,24 @@ public class Gui extends Application {
         GridPane.setConstraints(label_pw,19,11);
         GridPane.setConstraints(password,20,11);
         GridPane.setConstraints(button,20,12);
+        GridPane.setConstraints(forgot,20,14);
 
         HBox layout3=new HBox(10);
         layout3.setAlignment(Pos.BOTTOM_RIGHT);
-        layout3.getChildren().addAll(button_setup);
+        layout3.getChildren().addAll();
+        layout3.setStyle("-fx-background-color:#66b2ff");
 
         VBox layout2=new VBox(10);
         layout2.setAlignment(Pos.CENTER);
         layout2.getChildren().add(title);
 
-        layout.setStyle("-fx-background-color:#cc99ff");
+        layout.setStyle("-fx-background-image:url(\"currency3.jpg\");-fx-background-repeat: stretch;" +
+                "-fx-background-size: 700 450;\n" +
+                "    -fx-background-position: center center;");
+        //layout.setAlignment(Pos.CENTER);
+        label_id.setStyle("-fx-background-color:white;-fx-padding:5;");
+        label_pw.setStyle("-fx-background-color:white;-fx-padding:5;");
+
         title.setFont(Font.font("Verdana",30));
         layout2.setStyle("-fx-background-color:#66b2ff");
         layout2.setPadding(new Insets(20));
@@ -80,11 +87,21 @@ public class Gui extends Application {
             border.setTop(layout2);
             border.setBottom(layout3);
 
-        layout.getChildren().addAll(label_id, ID, label_pw, password,button);
+        layout.getChildren().addAll(label_id, ID, label_pw, password,button,forgot);
 
         Scene scene=new Scene(border,700,600);
+
         window.setScene(scene);
+        window.setResizable(false);
         window.show();
+
+        try {
+            Execute_query.set_con().createStatement().executeQuery("select *from create_acc;");
+        }catch (Exception e1)
+        {
+            Execute_query.setup();
+        }
+
 
         button.setOnAction( e -> {
 
@@ -100,6 +117,7 @@ public class Gui extends Application {
                     cust.custInterface(window,ID.getText(),scene);
 
                 }
+
                 else
                     alert_box("Incorrect Account ID or Password",0);
             } catch(Exception ex){
@@ -107,18 +125,7 @@ public class Gui extends Application {
             }
         });
 
-
-        button_setup.setOnAction(e -> {
-
-        try{
-
-            q.setup();
-
-        }catch (Exception ex){
-            System.out.println(ex);
-        }
-
-        });
+        forgot.setOnAction(e ->Customer.forgotPass());
 
     }
 
@@ -150,7 +157,7 @@ public class Gui extends Application {
         {
             layout.getChildren().addAll(yes,no);
         }
-        Scene scene=new Scene(layout,300,50);
+        Scene scene=new Scene(layout,400,50);
         window2.setScene(scene);
         window2.showAndWait();
 

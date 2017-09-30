@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class EmailSend {
 
-    static void email(String subject,String messageText,String email){
+    static Boolean email(String subject,String messageText,String email){
         try{
             String host ="smtp.gmail.com" ;
             String user = "srsbank123@gmail.com";
@@ -41,10 +41,18 @@ public class EmailSend {
            transport.sendMessage(msg, msg.getAllRecipients());
            transport.close();
            System.out.println("message send successfully");
-        }catch(Exception ex)
+        }catch(javax.mail.SendFailedException e)
         {
-            System.out.println(ex);
+            System.out.println(e);
+            Gui.alert_box("Invalid email ID !!",0);
+            return false;
+        }
+        catch (Exception e){
+            System.out.println(e);
+            Gui.alert_box("No Network Connection !!",0);
+            return false;
         }
 
+        return true;
     }
 }

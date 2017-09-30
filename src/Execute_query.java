@@ -22,6 +22,15 @@ public class Execute_query
     public String search_data(String account_id, String passw) throws Exception
     {
 
+        try{
+
+            Integer.parseInt(account_id);
+
+        }catch (Exception e)
+        {
+            return null;
+        }
+
         Statement stmt=set_con().createStatement();
         String write="select *from create_acc where cust_acc_no="+account_id+" and cust_pass='"+passw+"';";
         ResultSet res=stmt.executeQuery(write);
@@ -66,7 +75,7 @@ public class Execute_query
         return con;
     }
 
-    void setup() throws Exception
+    static void setup() throws Exception
     {
             Statement stmt=null;
 
@@ -99,39 +108,47 @@ public class Execute_query
         double withdraw;
         int acc_id=Integer.parseInt(accid);
 
-        String date=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-        String time=new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
-
         Statement stmt=set_con().createStatement();
-        ResultSet rs=stmt.executeQuery("select BALANCE from create_acc where cust_acc_no='"+acc_id+"'");
-        String balance_str="";
-        if(rs.next()){
-            balance_str=rs.getString(1);
-        }
+        ResultSet rs;
 
-        balance=Double.parseDouble(balance_str);
-        withdraw=Integer.parseInt(withdraw_str);
-        balance=balance-withdraw;
+            String date = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+            String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
-        String write="insert into log values (?,?,?,?,?,?)";
-        PreparedStatement prep = set_con().prepareStatement(write);
-        prep.setInt(1,acc_id);
-        prep.setString(2,date);
-        prep.setDouble(4,withdraw);
-        prep.setDouble(5,00);
-        prep.setDouble(6,balance);
-        prep.setString(3,time);
-        prep.executeUpdate();
+            rs = stmt.executeQuery("select BALANCE from create_acc where cust_acc_no='" + acc_id + "'");
+            String balance_str = "";
+            if (rs.next()) {
+                balance_str = rs.getString(1);
+            }
 
-        stmt.executeUpdate("update create_acc set BALANCE ="+balance+" where cust_acc_no="+accid);
+            balance = Double.parseDouble(balance_str);
+            withdraw = Integer.parseInt(withdraw_str);
+            balance = balance - withdraw;
 
+        String message="\n Amount Rs. "+withdraw_str+" has been successfully withdrawn from ur account ID:"+accid;
         rs=stmt.executeQuery("select cust_email from create_acc where cust_acc_no="+accid);
         rs.next();
 
-        String message="\n Amount Rs. "+withdraw_str+" has been successfully withdrawn from ur account ID:"+accid;
-        EmailSend.email("SRS BANK: Withdraw Successful",message,rs.getString(1));
-        Gui.alert_box("Withdraw Successful",0);
+            if(balance>0) {
+                if(EmailSend.email("SRS BANK: Withdraw Successful",message,rs.getString(1))) {
 
+                String write = "insert into log values (?,?,?,?,?,?)";
+                PreparedStatement prep = set_con().prepareStatement(write);
+                prep.setInt(1, acc_id);
+                prep.setString(2, date);
+                prep.setDouble(4, withdraw);
+                prep.setDouble(5, 00);
+                prep.setDouble(6, balance);
+                prep.setString(3, time);
+                prep.executeUpdate();
+
+                stmt.executeUpdate("update create_acc set BALANCE =" + balance + " where cust_acc_no=" + accid);
+
+                Gui.alert_box("Withdraw Successful", 0);
+
+            }
+
+        }
+            else Gui.alert_box("Not enough balance in Account!!",0);
         set_con().close();
     }
 
@@ -140,40 +157,45 @@ public class Execute_query
         double balance;
         double deposit;
         int acc_id=Integer.parseInt(accid);
-        String date=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-        String time=new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
         Statement stmt=set_con().createStatement();
-        ResultSet rs=stmt.executeQuery("select BALANCE from create_acc where cust_acc_no='"+acc_id+"'");
-        String balance_str="";
-        if(rs.next()){
-            balance_str=rs.getString(1);
-        }
-
-        balance=Double.parseDouble(balance_str);
-        deposit=Double.parseDouble(deposit_str);
-        balance=balance+deposit;
-
-        String write="insert into log values (?,?,?,?,?,?)";
-        PreparedStatement prep = set_con().prepareStatement(write);
-        prep.setInt(1,acc_id);
-        prep.setString(2,date);
-        prep.setDouble(4,00);
-        prep.setDouble(5,deposit);
-        prep.setDouble(6,balance);
-        prep.setString(3,time);
-        prep.executeUpdate();
-
-        stmt.executeUpdate("update create_acc set BALANCE ="+balance+" where cust_acc_no="+accid);
-
+        ResultSet rs;
         rs=stmt.executeQuery("select cust_email from create_acc where cust_acc_no="+accid);
         rs.next();
 
         String message="\n Amount Rs. "+deposit_str+" has been successfully deposited into ur account ID:"+accid;
-        EmailSend.email("SRS BANK: Deposit Successful",message,rs.getString(1));
-        Gui.alert_box("Deposit Successful",0);
 
-        set_con().close();
+        if(EmailSend.email("SRS BANK: Deposit Successful",message,rs.getString(1))) {
+
+            String date = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+            String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+
+            rs = stmt.executeQuery("select BALANCE from create_acc where cust_acc_no='" + acc_id + "'");
+            String balance_str = "";
+            if (rs.next()) {
+                balance_str = rs.getString(1);
+            }
+
+            balance = Double.parseDouble(balance_str);
+            deposit = Double.parseDouble(deposit_str);
+            balance = balance + deposit;
+
+            String write = "insert into log values (?,?,?,?,?,?)";
+            PreparedStatement prep = set_con().prepareStatement(write);
+            prep.setInt(1, acc_id);
+            prep.setString(2, date);
+            prep.setDouble(4, 00);
+            prep.setDouble(5, deposit);
+            prep.setDouble(6, balance);
+            prep.setString(3, time);
+            prep.executeUpdate();
+
+            stmt.executeUpdate("update create_acc set BALANCE =" + balance + " where cust_acc_no=" + accid);
+
+            Gui.alert_box("Deposit Successful", 0);
+
+            set_con().close();
+        }
     }
 
     static void update(String fullname,String addr,String mob,String email,String uidai,String dob,String acc_id) throws Exception
@@ -189,6 +211,16 @@ public class Execute_query
         prep.setString(6,dob);
         prep.setString(7,acc_id);
         prep.executeUpdate();
+
+    }
+
+    static void delete_acc(String id) throws Exception {
+
+        String write="delete from create_acc where cust_acc_no="+id;
+        String write2="delete from log where cust_acc_no="+id;
+
+        set_con().createStatement().executeUpdate(write);
+        set_con().createStatement().executeUpdate(write2);
 
     }
 }

@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -12,9 +13,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class Customer{
@@ -78,7 +82,7 @@ public class Customer{
         layout2.getChildren().addAll(title,menu);
         layout2.setAlignment(Pos.TOP_RIGHT);
         layout2.setPadding(new Insets(10));
-        layout2.setStyle("-fx-background-color:gray");
+        layout2.setStyle("-fx-background-color:#33ff33");
 
         VBox layout3=new VBox(20);
         layout3.getChildren().addAll(selectedImage,p);
@@ -94,7 +98,7 @@ public class Customer{
         logs.setOnAction(e -> {
             VBox layout_log = new VBox(10);
             try {
-                layout_log.getChildren().add(new MenuButtons().makeTable(ID, 1));
+                layout_log.getChildren().add(new AddTable().makeTable(ID, 1));
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -118,6 +122,70 @@ public class Customer{
 
     }
 
+    public static void forgotPass() {
+
+        Stage window =new Stage();
+        window.setTitle("Forgot password");
+        window.initModality(Modality.APPLICATION_MODAL);
+
+        String instr="Your Password would be send to the \n registered email ID of your account";
+
+        Label label=new Label("Enter your account number:");
+        TextField textField=new TextField();
+        Text text=new Text(instr);
+        Button send =new Button("Send password to email");
+
+        VBox layout =new VBox(5);
+        layout.getChildren().addAll(label,textField,send,text);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+
+        send.setOnAction(e ->
+                {
+                    ResultSet res = null;
+                    ResultSet res2;
+
+                    if (!textField.getText().isEmpty()) {
+
+                        try {
+                            res = Execute_query.set_con().createStatement().executeQuery("select *from create_acc where cust_acc_no=" + textField.getText());
+                            res.next();
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+
+                        try {
+                            if (!res.getString(1).isEmpty() && textField.getText() != null) {
+                                res = Execute_query.set_con().createStatement().executeQuery("select cust_email from create_acc where cust_acc_no=" + textField.getText());
+                                res.next();
+                                res2 = Execute_query.set_con().createStatement().executeQuery("select cust_pass from create_acc where cust_acc_no=" + textField.getText());
+                                res2.next();
+                                EmailSend.email("SRS BANK: Forgot Password ?", "Your account ID :" + textField.getText() +
+                                        "\n\n Password: " + res2.getString(1), res.getString(1));
+
+
+                                Gui.alert_box("Email send!! ", 0);
+                                window.close();
+
+                            } else Gui.alert_box("Invalid ID", 0);
+
+                        } catch (SQLException e1) {
+                            Gui.alert_box("Invalid ID", 0);
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+
+                    }
+                    else Gui.alert_box("Invalid ID",0);
+                }
+        );
+
+        Scene scene=new Scene(layout,400,150);
+        window.setScene(scene);
+        window.showAndWait();
+
+
+    }
 }
 
 
