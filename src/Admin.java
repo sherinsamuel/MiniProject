@@ -1,12 +1,7 @@
-
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -19,6 +14,9 @@ import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Admin{
 
@@ -29,6 +27,11 @@ public class Admin{
     private static VBox layout_search;
     private static String check_id="";
     private static boolean set_layout_flag=false;
+    static ImageView selectedImage;
+    static ComboBox<String> search_acc;
+    static BorderPane border2;
+    static Text p;
+    static String newText;
 
     void adminInterface(Stage window,  Scene scene1) throws Exception {
 
@@ -66,41 +69,44 @@ public class Admin{
         delete.setStyle("-fx-padding:15");
 
 
-        TextField search_acc=new TextField();
-        search_acc.setPromptText("Enter account ID");
+//        TextField search_acc=new TextField();
+//        search_acc.setPromptText("Enter account ID");
 
-        Text p=new Text();
+        p=new Text();
         p.setFont(Font.font(14));
 
         Label title=new Label("SRS Bank");
         title.setFont(Font.font(20));
         title.setTextFill(Paint.valueOf("white"));
 
-        ImageView selectedImage=new ImageView();
+        selectedImage=new ImageView();
         selectedImage.setFitHeight(150);
         selectedImage.setFitWidth(150);
 
-        ComboBox menu=new ComboBox<>();
-        menu.getItems().addAll("print logs","Log out","Create Account");
-        menu.setPromptText("Menu");
-        menu.setOnAction(e ->{
+        search_acc=new ComboBox<>();
+        search_acc.setEditable(true);
 
-            if(menu.getValue()=="Log out")
+
+        MenuBar menuBar = new MenuBar();
+        Menu menu=new Menu("Menu");
+        MenuItem logOut=new MenuItem("Log Out");
+        MenuItem createAcc=new MenuItem("Create Account");
+        menu.getItems().addAll(logOut,createAcc);
+        menuBar.getMenus().addAll(menu);
+
+        logOut.setOnAction(e ->{
+
+            boolean flag= Gui.alert_box("Confirm Log out ?",1);
+            if(flag)
             {
-                boolean flag= Gui.alert_box("Confirm Log out ?",1);
-                if(flag)
-                {
-                    window.setScene(scene1);
-                }
-                else
-                    menu.setPromptText("Menu");
-
+                window.setScene(scene1);
             }
 
-            if(menu.getValue()=="Create Account")
-            {
-                MakeAccount.acc_details();
-            }
+        });
+
+        createAcc.setOnAction(e ->{
+
+            MakeAccount.acc_details();
 
         });
 
@@ -112,7 +118,7 @@ public class Admin{
         layout1.setAlignment(Pos.CENTER);
 
         HBox layout2=new HBox(160);
-        layout2.getChildren().addAll(title,menu);
+        layout2.getChildren().addAll(title,menuBar);
         layout2.setAlignment(Pos.TOP_RIGHT);
         layout2.setPadding(new Insets(10));
         layout2.setStyle("-fx-background-color:ff6666");
@@ -134,7 +140,7 @@ public class Admin{
         border1.setBottom(layout5);
 
 
-        BorderPane border2=new BorderPane();
+        border2=new BorderPane();
         border2.setCenter(default_layout);
         border2.setLeft(layout1);
         border2.setTop(border1);
@@ -142,47 +148,57 @@ public class Admin{
         scene2=new Scene(border2,700,600);
         window.setScene(scene2);
 
+        search_acc.getEditor().textProperty().addListener((obs, oldText, newText) -> {
 
+            PreparedStatement res;
+            ResultSet r=null;
+            search_acc.getItems().clear();
 
-        search_b.setOnAction(e ->{
-
-            check_id = search_acc.getText(); //To keep common ID in whole actions
-
-            try {
-                details =q.display_profile(search_acc.getText());
-
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-
-            if(details!=null) {
-                p.setText(details);
+            if(!newText.isEmpty()) {
                 try {
-                    image1 = new Image(new FileInputStream("//home//sherin//Desktop//Snapchat//" + search_acc.getText() + ".jpg"));
-                } catch (FileNotFoundException e1) {
-                    e1.printStackTrace();
+                    res = Execute_query.set_con().prepareStatement("select cust_acc_no from create_acc where cust_acc_no like ?");
+                    res.setString(1, newText + "%");
+                    r = res.executeQuery();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                selectedImage.setImage(image1);
 
-            layout_search=new VBox(20);
-            layout_search.getChildren().addAll(selectedImage,p);
-            layout_search.setPadding(new Insets(20));
-            layout_search.setAlignment(Pos.TOP_CENTER);
+                try {
+                    while (r.next()) {
+                        try {
+                            String item=r.getString(1);
+                            search_acc.getItems().add(item);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                search_acc.show();
 
-            set_layout_flag=true; // To set layout only after ID is searched
-
-            border2.setCenter(layout_search);
-
+                System.out.println("Text changed from " + oldText + " to " + newText);
+                System.out.println("chalra kya ? " + newText);
             }
-            else Gui.alert_box("Account ID not available !!",0);
 
 
         });
 
-        /*search_acc.textProperty().addListener((obs, oldText, newText) -> {
-            System.out.println("Text changed from "+oldText+" to "+newText);
-            // ...
-        });*/
+        search_acc.setOnAction(e->{
+
+            System.out.println("kya pata: "+search_acc.getValue());
+
+        });
+
+
+        search_b.setOnAction(e ->{
+
+            check_id = search_acc.getEditor().getText();
+            setProfile();
+
+
+        });
+
 
         profile.setOnAction(e -> border2.setCenter(layout_search));
 
@@ -320,6 +336,37 @@ public class Admin{
     }
 
 
+static void setProfile()
+{
+   // check_id = ID; //To keep common ID in whole actions
 
+    try {
+        details =Execute_query.display_profile(search_acc.getValue());
+
+    } catch (Exception e1) {
+        e1.printStackTrace();
+    }
+
+    if(details!=null) {
+        p.setText(details);
+        try {
+            image1 = new Image(new FileInputStream("//home//sherin//Desktop//Snapchat//" + search_acc.getValue() + ".jpg"));
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
+        selectedImage.setImage(image1);
+
+        layout_search=new VBox(20);
+        layout_search.getChildren().addAll(selectedImage,p);
+        layout_search.setPadding(new Insets(20));
+        layout_search.setAlignment(Pos.TOP_CENTER);
+
+        set_layout_flag=true; // To set layout only after ID is searched
+
+        border2.setCenter(layout_search);
+
+    }
+    else Gui.alert_box("Account ID not available !!",0);
+}
 
 }

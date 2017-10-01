@@ -50,7 +50,7 @@ public class Execute_query
 
     }
 
-    public  String display_profile(String acc_id) throws Exception {
+    public static   String display_profile(String acc_id) throws Exception {
 
 
         Statement stmt=set_con().createStatement();

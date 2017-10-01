@@ -16,6 +16,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
+
 public class Gui extends Application {
 
     Stage window;
@@ -82,7 +84,7 @@ public class Gui extends Application {
         layout.setHgap(10);
         layout.setPadding(new Insets(20,20,20,20));
 
-           BorderPane border=new BorderPane();
+           BorderPane border= new BorderPane();
             border.setCenter(layout);
             border.setTop(layout2);
             border.setBottom(layout3);
@@ -100,6 +102,7 @@ public class Gui extends Application {
         }catch (Exception e1)
         {
             Execute_query.setup();
+            new File(System.getProperty("user.home")+"/resources").mkdir();
         }
 
 

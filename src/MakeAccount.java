@@ -6,15 +6,20 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class MakeAccount {
 
     static boolean flag=true;
+
+    private Desktop desktop = Desktop.getDesktop();
 
     static void acc_details()
     {
@@ -47,6 +52,12 @@ public class MakeAccount {
         DatePicker cal=new DatePicker();
         cal.setPromptText("select date");
 
+        FileChooser fileChooser=new FileChooser();
+        fileChooser.setTitle("Select Image");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        Button fileButton=new Button("Upload Image");
+
         GridPane layout=new GridPane();
         layout.setPadding(new Insets(20));
         GridPane.setConstraints(fullname,0,0);
@@ -63,13 +74,14 @@ public class MakeAccount {
         GridPane.setConstraints(uidai_,1,5);
         GridPane.setConstraints(pass,0,6);
         GridPane.setConstraints(pass_,1,6);
-        GridPane.setConstraints(create,1,7);
+        GridPane.setConstraints(fileButton,1,7);
+        GridPane.setConstraints(create,1,8);
 
 
         layout.setAlignment(Pos.CENTER);
         layout.setVgap(10);
         layout.setHgap(8);
-        layout.getChildren().addAll(fullname,fullname_,address,address_,mobile,mobile_,email,email_,dob,cal,uidai,uidai_,pass,pass_,create);
+        layout.getChildren().addAll(fullname,fullname_,address,address_,mobile,mobile_,email,email_,dob,cal,uidai,uidai_,pass,pass_,fileButton,create);
 
         create.setOnAction(e ->
         {
@@ -110,6 +122,17 @@ public class MakeAccount {
             }
 
             else Gui.alert_box("All details not entered !!",0);
+
+        });
+
+        fileButton.setOnAction(e ->{
+
+            //File file = fileChooser.showOpenDialog(window2);
+            try {
+                new ImageUpload().upload(window2);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
 
         });
 
@@ -221,6 +244,7 @@ public class MakeAccount {
         window2.setScene(scene);
         window2.showAndWait();
 
-
     }
+
+
 }

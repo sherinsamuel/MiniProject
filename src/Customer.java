@@ -1,10 +1,7 @@
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -53,24 +50,22 @@ public class Customer{
         Image image1 = new Image(new FileInputStream("//home//sherin//Desktop//Snapchat//"+ID+".jpg"));
         selectedImage.setImage(image1);
 
-        ComboBox menu=new ComboBox<>();
-        menu.getItems().addAll("print logs","Log out");
-        menu.setPromptText("Menu");
-        menu.setOnAction(e ->{
+        MenuBar menuBar = new MenuBar();
+        Menu menu=new Menu("Menu");
+        MenuItem logOut=new MenuItem("Log Out");
+        menu.getItems().addAll(logOut);
+        menuBar.getMenus().addAll(menu);
 
-            if(menu.getValue()=="Log out")
-            {
+        logOut.setOnAction(e ->{
+
                 boolean flag= Gui.alert_box("Confirm Log out ?",1);
                 if(flag)
                 {
                     window.setScene(scene1);
                 }
-                else
-                    menu.setPromptText("Menu");
-
-            }
 
         });
+
 
         VBox layout1=new VBox(50);
         layout1.getChildren().addAll(profile,logs);
@@ -79,7 +74,7 @@ public class Customer{
         layout1.setAlignment(Pos.CENTER);
 
         HBox layout2=new HBox(160);
-        layout2.getChildren().addAll(title,menu);
+        layout2.getChildren().addAll(title,menuBar);
         layout2.setAlignment(Pos.TOP_RIGHT);
         layout2.setPadding(new Insets(10));
         layout2.setStyle("-fx-background-color:#33ff33");
@@ -160,11 +155,13 @@ public class Customer{
                                 res.next();
                                 res2 = Execute_query.set_con().createStatement().executeQuery("select cust_pass from create_acc where cust_acc_no=" + textField.getText());
                                 res2.next();
-                                EmailSend.email("SRS BANK: Forgot Password ?", "Your account ID :" + textField.getText() +
-                                        "\n\n Password: " + res2.getString(1), res.getString(1));
 
+                                if(EmailSend.email("SRS BANK: Forgot Password ?", "Your account ID :" + textField.getText() +
+                                        "\n\n Password: " + res2.getString(1), res.getString(1)))
+                                {
+                                    Gui.alert_box("Email send!! ", 0);
+                                }
 
-                                Gui.alert_box("Email send!! ", 0);
                                 window.close();
 
                             } else Gui.alert_box("Invalid ID", 0);
