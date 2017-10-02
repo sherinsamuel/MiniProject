@@ -184,12 +184,6 @@ public class Admin{
 
         });
 
-        search_acc.setOnAction(e->{
-
-            System.out.println("kya pata: "+search_acc.getValue());
-
-        });
-
 
         search_b.setOnAction(e ->{
 
@@ -350,7 +344,7 @@ static void setProfile()
     if(details!=null) {
         p.setText(details);
         try {
-            image1 = new Image(new FileInputStream("//home//sherin//Desktop//Snapchat//" + search_acc.getValue() + ".jpg"));
+            image1 = new Image(new FileInputStream(System.getProperty("user.home")+"/resources/" + search_acc.getValue() ));
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
         }

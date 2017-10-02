@@ -22,6 +22,7 @@ public class Customer{
 
     Scene scene2;
     Execute_query q=new Execute_query();
+
     void custInterface(Stage window, String ID,Scene scene1) throws Exception {
 
         String details=q.display_profile(ID);
@@ -47,7 +48,7 @@ public class Customer{
         ImageView selectedImage=new ImageView();
         selectedImage.setFitHeight(150);
         selectedImage.setFitWidth(150);
-        Image image1 = new Image(new FileInputStream("//home//sherin//Desktop//Snapchat//"+ID+".jpg"));
+        Image image1 = new Image(new FileInputStream(System.getProperty("user.home")+"/resources/"+ID));
         selectedImage.setImage(image1);
 
         MenuBar menuBar = new MenuBar();

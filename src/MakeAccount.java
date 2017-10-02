@@ -170,7 +170,7 @@ public class MakeAccount {
 
                 try {
 
-                    Integer.parseInt(newText);
+                    Long.parseLong(newText);
 
                 } catch (Exception e) {
 
