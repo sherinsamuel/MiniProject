@@ -187,7 +187,7 @@ public class Admin{
 
         search_b.setOnAction(e ->{
 
-            check_id = search_acc.getEditor().getText();
+            check_id = search_acc.getEditor().getText(); //To keep common ID in whole actions
             setProfile();
 
 
@@ -332,7 +332,6 @@ public class Admin{
 
 static void setProfile()
 {
-   // check_id = ID; //To keep common ID in whole actions
 
     try {
         details =Execute_query.display_profile(search_acc.getValue());

@@ -90,7 +90,7 @@ public class UpdateAccount {
                     }
 
                     String subject="SRS BANK ACCOUNT CREATION SUCCESSFUL!!";
-                    String message="Hello +fullname_.getText()+!!\n\nYour Account Has been Successfully created !!";
+                    String message="Hello +fullname_.getText()+!!\n\nYour Account Has been Successfully updated !!";
 
                     EmailSend.email(subject,message,email_.getText());
 

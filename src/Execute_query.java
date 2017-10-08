@@ -61,7 +61,7 @@ public class Execute_query
 
        if( res.next())
        {
-            details="Account ID: "+res.getString(1)+"\n\nName: "+ res.getString(3)+" \n\nAddress: "+ res.getString(4)+" \n\nMobile No: "+ res.getString(5)+"\n\nemail: "+ res.getString(6)+"\n\nAadhar no: "+res.getString(7);
+            details="Account ID: "+res.getString(1)+"\n\nName: "+ res.getString(3)+" \n\nAddress: "+ res.getString(4)+" \n\nMobile No: "+ res.getString(5)+"\n\nemail: "+ res.getString(6)+"\n\nAadhar no: "+res.getString(7)+"\n\nCurrent Balance: "+res.getString(8);
        }
         set_con().close();
         return details;
@@ -211,6 +211,7 @@ public class Execute_query
         prep.setString(6,dob);
         prep.setString(7,acc_id);
         prep.executeUpdate();
+        set_con().close();
 
     }
 
@@ -221,6 +222,29 @@ public class Execute_query
 
         set_con().createStatement().executeUpdate(write);
         set_con().createStatement().executeUpdate(write2);
+        set_con().close();
+
+    }
+
+    public static boolean checkUIDAI(String uidai) {
+
+        try {
+
+        ResultSet rs=set_con().createStatement().executeQuery("select *from create_acc where cust_UIDAI='"+uidai+"'");
+        rs.next();
+
+            if(rs.getString(1).isEmpty()){
+
+                return true;
+
+            }
+            else return false;
+        }
+         catch (Exception e) {
+             return true;
+
+        }
+
 
     }
 }

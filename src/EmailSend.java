@@ -47,8 +47,8 @@ public class EmailSend {
             Gui.alert_box("Invalid email ID !!",0);
             return false;
         }
-        catch (Exception e){
-            System.out.println(e);
+        catch (Exception e1){
+            System.out.println(e1);
             Gui.alert_box("No Network Connection !!",0);
             return false;
         }

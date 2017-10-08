@@ -85,43 +85,53 @@ public class MakeAccount {
 
         create.setOnAction(e ->
         {
-            System.out.println(String.valueOf(cal.getValue()));
 
-            String acc_id=null;
+            try {
+                if(Execute_query.checkUIDAI(uidai_.getText())) {
 
-            String subject="SRS BANK ACCOUNT CREATION SUCCESSFUL!!";
-            String message="Hello +fullname_.getText()+!!\n\nYour Account Has been Successfully created !!" +
-                    "\n\n\n\nYour account ID is :"+acc_id;
+                    String acc_id = null;
+                    Statement stmt = Execute_query.set_con().createStatement();
+                    ResultSet res = stmt.executeQuery("select cust_acc_no from create_acc order by cust_acc_no desc limit 1");
+                    res.next();
+                    int accno=Integer.parseInt(res.getString(1));
+                    accno=accno+1;
+                    acc_id=String.valueOf(accno);
 
-            if(!fullname_.getText().isEmpty() && !address_.getText().isEmpty() && !mobile_.getText().isEmpty() &&
-                    !email_.getText().isEmpty() && cal.getValue()!=null && !uidai_.getText().isEmpty() && !pass_.getText().isEmpty() && flag)
-            {
+                    String subject = "SRS BANK ACCOUNT CREATION SUCCESSFUL!!";
+                    String message = "Hello " + fullname_.getText() + "!!\n\nYour Account Has been Successfully created !!" +
+                            "\n\n\n\nYour account ID is :" + acc_id;
 
-                if (Gui.alert_box("Confirm account creation ?", 1)) {
+                    if (!fullname_.getText().isEmpty() && !address_.getText().isEmpty() && !mobile_.getText().isEmpty() &&
+                            !email_.getText().isEmpty() && cal.getValue() != null && !uidai_.getText().isEmpty() && !pass_.getText().isEmpty() && flag) {
 
-                    if( EmailSend.email(subject,message,email_.getText())==true) {
+                        if (Gui.alert_box("Confirm account creation ?", 1)) {
 
-                        try {
+                            if (EmailSend.email(subject, message, email_.getText()) == true) {
 
-                            Execute_query.write_data(fullname_.getText(), address_.getText(), mobile_.getText(), email_.getText(), String.valueOf((cal.getValue())), uidai_.getText(), pass_.getText());
-                            Statement stmt = Execute_query.set_con().createStatement();
-                            ResultSet res = stmt.executeQuery("select cust_acc_no from create_acc where cust_UIDAI='" + uidai_.getText() + "'");
-                            if (res.next()) {
+                                try {
 
-                                acc_id = res.getString(1);
+                                    Execute_query.write_data(fullname_.getText(), address_.getText(), mobile_.getText(), email_.getText(), String.valueOf((cal.getValue())), uidai_.getText(), pass_.getText());
+
+                                    stmt = Execute_query.set_con().createStatement();
+                                    res = stmt.executeQuery("select cust_acc_no from create_acc where cust_UIDAI='" + uidai_.getText() + "'");
+                                    if (res.next()) {
+
+                                        acc_id = res.getString(1);
+                                    }
+                                } catch (Exception e2) {
+                                    e2.printStackTrace();
+                                }
+                                Gui.alert_box("Account ID: [" + acc_id + "] Successfully Created", 0);
+
+                                window2.close();
                             }
-
-                        } catch (Exception e2) {
-                            e2.printStackTrace();
                         }
-                        Gui.alert_box("Account ID: [" + acc_id + "] Successfully Created", 0);
+                    } else Gui.alert_box("All details not entered !!", 0);
 
-                        window2.close();
-                    }
-                }
+                }else Gui.alert_box("UIDAI already in use !!", 0);
+            } catch (Exception e1) {
+                e1.printStackTrace();
             }
-
-            else Gui.alert_box("All details not entered !!",0);
 
         });
 
