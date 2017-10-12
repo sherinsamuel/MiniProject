@@ -90,7 +90,7 @@ public class MakeAccount {
             try {
                 if(Execute_query.checkUIDAI(uidai_.getText())) {
 
-                    String acc_id = null;
+                    String acc_id;
                     Statement stmt = Execute_query.set_con().createStatement();
                     ResultSet res = stmt.executeQuery("select cust_acc_no from create_acc order by cust_acc_no desc limit 1");
                     res.next();
