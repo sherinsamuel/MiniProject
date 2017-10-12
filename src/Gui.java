@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
+
+
 public class Gui extends Application {
 
     Stage window;
@@ -38,7 +40,7 @@ public class Gui extends Application {
 
         Label label_id=new Label("Account ID:");
         Label label_pw=new Label("Password:");
-        Label title=new Label("SRS Co-operative Bank");
+        Label title=new Label("SRSV Co-operative Bank");
         title.setTextFill(Paint.valueOf("white"));
 
         PasswordField password=new PasswordField();

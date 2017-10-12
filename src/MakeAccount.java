@@ -143,7 +143,7 @@ public class MakeAccount {
 
         fileButton.setOnAction(e ->{
 
-            //File file = fileChooser.showOpenDialog(window2);
+
             try {
                 new ImageUpload().upload(window2);
             } catch (Exception e1) {

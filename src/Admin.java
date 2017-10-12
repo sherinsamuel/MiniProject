@@ -75,7 +75,7 @@ public class Admin{
         p=new Text();
         p.setFont(Font.font(14));
 
-        Label title=new Label("SRS Bank");
+        Label title=new Label("SRSV Bank");
         title.setFont(Font.font(20));
         title.setTextFill(Paint.valueOf("white"));
 
@@ -100,6 +100,7 @@ public class Admin{
             if(flag)
             {
                 window.setScene(scene1);
+                window.setTitle("Login Window");
             }
 
         });
@@ -147,6 +148,7 @@ public class Admin{
 
         scene2=new Scene(border2,700,600);
         window.setScene(scene2);
+        window.setTitle("Admin Login");
 
         search_acc.getEditor().textProperty().addListener((obs, oldText, newText) -> {
 

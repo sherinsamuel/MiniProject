@@ -27,8 +27,6 @@ public class Customer{
 
         String details=q.display_profile(ID);
 
-        String log_details=new String("blaaa blaaa bleeee");
-
         Button profile=new Button("profile");
         profile.setStyle("-fx-padding:15");
 
@@ -39,7 +37,6 @@ public class Customer{
         Text p=new Text(details);
         p.setFont(Font.font(14));
 
-        Text logtext=new Text(log_details);
 
         Label title=new Label("SRS Bank");
         title.setFont(Font.font(20));
@@ -63,6 +60,7 @@ public class Customer{
                 if(flag)
                 {
                     window.setScene(scene1);
+                    window.setTitle("Login Window");
                 }
 
         });
@@ -84,11 +82,6 @@ public class Customer{
         layout3.getChildren().addAll(selectedImage,p);
         layout3.setPadding(new Insets(20));
         layout3.setAlignment(Pos.TOP_CENTER);
-
-        VBox layout4=new VBox(10);
-        layout4.getChildren().add(logtext);
-        layout4.setPadding(new Insets(20));
-        layout4.setAlignment(Pos.TOP_LEFT);
 
         BorderPane border=new BorderPane();
         logs.setOnAction(e -> {
@@ -114,6 +107,7 @@ public class Customer{
 
         scene2=new Scene(border,700,600);
         window.setScene(scene2);
+        window.setTitle("Customer Login");
 
 
     }
