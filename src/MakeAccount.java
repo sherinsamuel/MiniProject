@@ -85,6 +85,7 @@ public class MakeAccount {
 
         create.setOnAction(e ->
         {
+            int accno;
 
             try {
                 if(Execute_query.checkUIDAI(uidai_.getText())) {
@@ -93,7 +94,12 @@ public class MakeAccount {
                     Statement stmt = Execute_query.set_con().createStatement();
                     ResultSet res = stmt.executeQuery("select cust_acc_no from create_acc order by cust_acc_no desc limit 1");
                     res.next();
-                    int accno=Integer.parseInt(res.getString(1));
+                    try {
+                        accno = Integer.parseInt(res.getString(1));
+                    }catch (Exception z)
+                    {
+                        accno=2000;
+                    }
                     accno=accno+1;
                     acc_id=String.valueOf(accno);
 
