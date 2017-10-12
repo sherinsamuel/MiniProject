@@ -38,7 +38,7 @@ public class Customer{
         p.setFont(Font.font(14));
 
 
-        Label title=new Label("SRS Bank");
+        Label title=new Label("SRSV Bank");
         title.setFont(Font.font(20));
         title.setTextFill(Paint.valueOf("white"));
 
