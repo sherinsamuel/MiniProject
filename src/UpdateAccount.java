@@ -80,7 +80,7 @@ public class UpdateAccount {
                     !email_.getText().isEmpty() && cal.getValue()!=null && !uidai_.getText().isEmpty() )
             {
 
-                if (Gui.alert_box("Confirm account creation ?", 1)) {
+                if (Gui.alert_box("Confirm account update ?", 1)) {
 
                     try {
                         Execute_query.update(fullname_.getText(), address_.getText(), mobile_.getText(), email_.getText(),
@@ -92,7 +92,6 @@ public class UpdateAccount {
                     String subject="SRS BANK ACCOUNT CREATION SUCCESSFUL!!";
                     String message="Hello +fullname_.getText()+!!\n\nYour Account Has been Successfully updated !!";
 
-                    EmailSend.email(subject,message,email_.getText());
 
                     Gui.alert_box("Updated Successfully",0);
                 }

@@ -1,3 +1,4 @@
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,7 +24,7 @@ public class Customer{
     Scene scene2;
     Execute_query q=new Execute_query();
 
-    void custInterface(Stage window, String ID,Scene scene1) throws Exception {
+    void custInterface(Stage window, String ID,Scene scene1,String pass) throws Exception {
 
         String details=q.display_profile(ID);
 
@@ -33,6 +34,8 @@ public class Customer{
         Button logs=new Button("logs");
         logs.setStyle("-fx-padding:20");
 
+        Button transfer =new Button("Money\nTransfer");
+        transfer.setStyle("-fx-padding:20");
 
         Text p=new Text(details);
         p.setFont(Font.font(14));
@@ -54,7 +57,7 @@ public class Customer{
         menu.getItems().addAll(logOut);
         menuBar.getMenus().addAll(menu);
 
-        logOut.setOnAction(e ->{
+        logOut.setOnAction((ActionEvent e) ->{
 
                 boolean flag= Gui.alert_box("Confirm Log out ?",1);
                 if(flag)
@@ -67,7 +70,7 @@ public class Customer{
 
 
         VBox layout1=new VBox(50);
-        layout1.getChildren().addAll(profile,logs);
+        layout1.getChildren().addAll(profile,logs,transfer);
         layout1.setPadding(new Insets(10));
         layout1.setStyle("-fx-background-color:lightgray");
         layout1.setAlignment(Pos.CENTER);
@@ -101,6 +104,13 @@ public class Customer{
             border.setCenter(layout3);
 
         });
+
+        transfer.setOnAction(e -> {
+
+            Transaction.transfer(ID,pass);
+
+        });
+
         border.setCenter(layout3);
         border.setLeft(layout1);
         border.setTop(layout2);

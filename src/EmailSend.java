@@ -10,6 +10,7 @@ public class EmailSend {
 
     static Boolean email(String subject,String messageText,String email){
         try{
+
             String host ="smtp.gmail.com" ;
             String user = "srsbank123@gmail.com";
             String pass = "8+7+1997";

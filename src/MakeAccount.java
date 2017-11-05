@@ -25,7 +25,6 @@ public class MakeAccount {
     {
 
         Stage window2 = new Stage();
-        window2.setTitle("Admin Login");
         window2.initModality(Modality.APPLICATION_MODAL);
 
         window2.setTitle("Create Customer Account");
@@ -96,11 +95,13 @@ public class MakeAccount {
                     res.next();
                     try {
                         accno = Integer.parseInt(res.getString(1));
+                        accno=accno+1;
+                        
                     }catch (Exception z)
                     {
                         accno=2000;
                     }
-                    accno=accno+1;
+
                     acc_id=String.valueOf(accno);
 
                     String subject = "SRS BANK ACCOUNT CREATION SUCCESSFUL!!";
@@ -112,12 +113,13 @@ public class MakeAccount {
 
                         if (Gui.alert_box("Confirm account creation ?", 1)) {
 
-                            if (EmailSend.email(subject, message, email_.getText()) == true) {
+
 
                                 try {
 
                                     Execute_query.write_data(fullname_.getText(), address_.getText(), mobile_.getText(), email_.getText(), String.valueOf((cal.getValue())), uidai_.getText(), pass_.getText());
 
+                                    EmailSend.email(subject, message, email_.getText());
                                     stmt = Execute_query.set_con().createStatement();
                                     res = stmt.executeQuery("select cust_acc_no from create_acc where cust_UIDAI='" + uidai_.getText() + "'");
                                     if (res.next()) {
@@ -130,7 +132,7 @@ public class MakeAccount {
                                 Gui.alert_box("Account ID: [" + acc_id + "] Successfully Created", 0);
 
                                 window2.close();
-                            }
+
                         }
                     } else Gui.alert_box("All details not entered !!", 0);
 
@@ -205,7 +207,7 @@ public class MakeAccount {
 
         email_.textProperty().addListener((obs, oldText, newText) -> {
 
-            System.out.println(newText.endsWith("@gmail.com"));
+         //   System.out.println(newText.endsWith("@gmail.com"));
 
             if(newText.endsWith("@gmail.com"))
             {

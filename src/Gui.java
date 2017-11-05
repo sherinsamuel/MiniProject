@@ -99,6 +99,7 @@ public class Gui extends Application {
         window.setResizable(false);
         window.show();
 
+        // Create resource file and database
         try {
             Execute_query.set_con().createStatement().executeQuery("select *from create_acc;");
         }catch (Exception e1)
@@ -117,9 +118,9 @@ public class Gui extends Application {
                 {
                     admin.adminInterface(window,scene);
                 }
-                else if (q.search_data(ID.getText(), password.getText())!=null) {
+                else if (Execute_query.search_data(ID.getText(), password.getText())!=null) {
 
-                    cust.custInterface(window,ID.getText(),scene);
+                    cust.custInterface(window,ID.getText(),scene,password.getText());
 
                 }
 

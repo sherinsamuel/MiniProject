@@ -1,3 +1,4 @@
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -198,7 +199,7 @@ public class Admin{
 
         profile.setOnAction(e -> border2.setCenter(layout_search));
 
-        deposit.setOnAction(e -> {
+        deposit.setOnAction((ActionEvent e) -> {
 
             if(set_layout_flag)
             {
@@ -272,7 +273,7 @@ public class Admin{
                     if (Gui.alert_box("Confirm deposit ?", 1)) {
 
                         try {
-                            Execute_query.deposit(check_id, deposit_text.getText());
+                            Execute_query.deposit(check_id, deposit_text.getText(),1);
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }
@@ -297,7 +298,7 @@ public class Admin{
                     if (Gui.alert_box("Confirm withdraw ?", 1)) {
 
                         try {
-                            Execute_query.withdraw(check_id, withdraw_text.getText());
+                            Execute_query.withdraw(check_id, withdraw_text.getText(),1);
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }

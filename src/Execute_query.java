@@ -19,7 +19,7 @@ public class Execute_query
     }
 
 
-    public String search_data(String account_id, String passw) throws Exception
+    public static String search_data(String account_id, String passw) throws Exception
     {
 
         try{
@@ -102,7 +102,7 @@ public class Execute_query
     }
 
 
-    static void withdraw(String accid,String withdraw_str) throws Exception
+    static void withdraw(String accid,String withdraw_str,int flag) throws Exception
     {
         double balance;
         double withdraw;
@@ -129,7 +129,7 @@ public class Execute_query
         rs.next();
 
             if(balance>0) {
-                if(EmailSend.email("SRS BANK: Withdraw Successful",message,rs.getString(1))) {
+                if(true) {
 
                 String write = "insert into log values (?,?,?,?,?,?)";
                 PreparedStatement prep = set_con().prepareStatement(write);
@@ -142,17 +142,19 @@ public class Execute_query
                 prep.executeUpdate();
 
                 stmt.executeUpdate("update create_acc set BALANCE =" + balance + " where cust_acc_no=" + accid);
-
-                Gui.alert_box("Withdraw Successful", 0);
+                if (flag==1) {
+                    EmailSend.email("SRS BANK: Withdraw Successful", message, rs.getString(1));
+                    Gui.alert_box("Withdraw Successful", 0);
+                }
 
             }
 
         }
             else Gui.alert_box("Not enough balance in Account!!",0);
-        set_con().close();
+
     }
 
-    static void deposit(String accid,String deposit_str) throws Exception
+    static void deposit(String accid,String deposit_str,int flag) throws Exception
     {
         double balance;
         double deposit;
@@ -165,7 +167,6 @@ public class Execute_query
 
         String message="\n Amount Rs. "+deposit_str+" has been successfully deposited into ur account ID:"+accid;
 
-        if(EmailSend.email("SRS BANK: Deposit Successful",message,rs.getString(1))) {
 
             String date = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
             String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
@@ -191,11 +192,12 @@ public class Execute_query
             prep.executeUpdate();
 
             stmt.executeUpdate("update create_acc set BALANCE =" + balance + " where cust_acc_no=" + accid);
+            if (flag==1) {
+                EmailSend.email("SRS BANK: Deposit Successful", message, rs.getString(1));
+                Gui.alert_box("Deposit Successful", 0);
+            }
 
-            Gui.alert_box("Deposit Successful", 0);
 
-            set_con().close();
-        }
     }
 
     static void update(String fullname,String addr,String mob,String email,String uidai,String dob,String acc_id) throws Exception
@@ -245,6 +247,48 @@ public class Execute_query
 
         }
 
+
+    }
+
+    public static String searchById(String ID) throws Exception {
+
+
+        Statement stmt=set_con().createStatement();
+        String write="select *from create_acc where cust_acc_no="+ID;
+        ResultSet res=stmt.executeQuery(write);
+
+        if (res.next())
+        {
+            String ex=res.getString(1);
+            set_con().close();
+            return ex;
+        }
+        else
+        {
+            set_con().close();
+            return null;
+        }
+
+    }
+
+    public static void writeTransfer(String amount, String ID, String cust_id) throws Exception {
+
+        Statement stmt=set_con().createStatement();
+        ResultSet rs;
+        rs=stmt.executeQuery("select cust_email from create_acc where cust_acc_no="+ID);
+        rs.next();
+        String ID_email = rs.getString(1);
+        ResultSet cs = stmt.executeQuery("select cust_email from create_acc where cust_acc_no=" + cust_id);
+        cs.next();
+
+        Execute_query.withdraw(cust_id,amount,0);
+        Execute_query.deposit(ID,amount,0);
+
+        String message1="Transfer of amount Rs."+amount+" successfully done to account ID : "+ID;
+        String message2="Amount Rs."+amount+" successfully received from account ID: "+cust_id;
+        EmailSend.email("SRS BANK: Money Transfer Successful", message1, cs.getString(1));
+        EmailSend.email("SRS BANK: Money Transfer Successful", message2, ID_email);
+        Gui.alert_box("Transfer done Successfully!!",0);
 
     }
 }
